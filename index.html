@@ -215,6 +215,81 @@
         justify-content: space-between;
       }
 
+      /* Nav Brand Group & Profile Avatar Link (LinkedIn) */
+      .nav-brand-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+      }
+
+      .nav-profile-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border-radius: 50%;
+        cursor: pointer;
+        outline: none;
+        text-decoration: none;
+      }
+
+      .nav-profile-photo {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        cursor: pointer;
+        background-color: transparent;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                    box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                    border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      html.dark .nav-profile-photo {
+        border-color: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Hover & Focus state: subtle scale(1.08) with smooth 0.2s transition, plus soft box-shadow glow using LinkedIn blue */
+      .nav-profile-link:hover .nav-profile-photo,
+      .nav-profile-link:focus-visible .nav-profile-photo {
+        transform: scale(1.08);
+        border-color: #0a66c2;
+        box-shadow: 0 0 14px rgba(10, 102, 194, 0.45);
+      }
+
+      html.dark .nav-profile-link:hover .nav-profile-photo,
+      html.dark .nav-profile-link:focus-visible .nav-profile-photo {
+        border-color: #70b5f9;
+        box-shadow: 0 0 16px rgba(112, 181, 249, 0.55);
+      }
+
+      .nav-profile-link:focus-visible {
+        outline: 2px solid #0a66c2;
+        outline-offset: 3px;
+      }
+
+      html.dark .nav-profile-link:focus-visible {
+        outline-color: #70b5f9;
+      }
+
+      /* Visually Hidden Text for Screen Readers */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
       .nav-brand {
         font-size: 15px;
         font-weight: 600;
@@ -504,29 +579,196 @@
         position: relative;
       }
 
-      /* Subtle Hero Photo Parallax Wrapper */
-      .profile-wrapper {
+      /* ==========================================================================
+         HERO SECTION: FULL-BLEED VIDEO DRIVEN HERO
+         ========================================================================== */
+      #hero {
         position: relative;
-        margin-bottom: 32px;
-        display: inline-block;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding-top: calc(var(--nav-height) + 60px);
+        padding-bottom: 96px;
+        overflow: hidden;
+      }
+
+      /* Full-Bleed Hero Video Wrapper (Framer Motion style entrance & float) */
+      @keyframes heroVideoEntrance {
+        from {
+          opacity: 0;
+          transform: scale(0.92);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes heroVideoFloat {
+        0%, 100% {
+          transform: translateY(-6px);
+        }
+        50% {
+          transform: translateY(6px);
+        }
+      }
+
+      .hero-video-wrapper {
+        position: absolute;
+        inset: -24px;
+        overflow: hidden;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0;
+        transform: scale(0.92);
+        animation: heroVideoEntrance 900ms cubic-bezier(0.16, 1, 0.3, 1) 120ms forwards;
+        will-change: transform, opacity;
+      }
+
+      .hero-video-fullbleed {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        animation: heroVideoFloat 6s ease-in-out infinite;
         will-change: transform;
       }
 
-      .profile-photo {
-        width: 148px;
-        height: 148px;
-        border-radius: 50%;
-        object-fit: cover;
-        background: var(--card-bg);
-        border: 4px solid var(--card-bg);
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1), 0 0 0 1px var(--card-border);
-        transition: transform 0.4s var(--apple-ease), box-shadow 0.4s var(--apple-ease);
-        display: block;
+      /* Semi-transparent dark overlay for pristine text readability */
+      .hero-video-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(0.5px);
+        -webkit-backdrop-filter: blur(0.5px);
+        z-index: 1;
+        transition: background-color 0.3s ease;
       }
 
-      .profile-photo:hover {
-        transform: scale(1.02);
-        box-shadow: 0 20px 42px rgba(0, 0, 0, 0.14), 0 0 0 1px var(--accent);
+      html.dark .hero-video-overlay {
+        background: rgba(0, 0, 0, 0.55);
+      }
+
+      /* Bottom gradient mask smoothly melting video into page background */
+      .hero-video-bottom-gradient {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 180px;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, var(--bg) 100%);
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      /* High-contrast Apple typography over full-bleed video */
+      .hero-video-active .hero-name {
+        color: #ffffff !important;
+        text-shadow: 0 4px 24px rgba(0, 0, 0, 0.65);
+      }
+
+      .hero-video-active .hero-subtitle {
+        color: #64d2ff !important;
+        text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
+      }
+
+      .hero-video-active .hero-subtitle .sub-lead {
+        color: rgba(255, 255, 255, 0.92) !important;
+      }
+
+      .hero-video-active .hero-hook {
+        color: rgba(255, 255, 255, 0.84) !important;
+        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      .hero-video-active .hero-badge {
+        background: rgba(255, 255, 255, 0.14) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.28) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      }
+
+      .hero-video-active .pill-btn-secondary {
+        background-color: rgba(255, 255, 255, 0.14) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+      }
+
+      .hero-video-active .pill-btn-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.26) !important;
+        border-color: rgba(255, 255, 255, 0.55) !important;
+      }
+
+      .hero-video-active .stat-card {
+        background: rgba(18, 24, 38, 0.65) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35) !important;
+      }
+
+      .hero-video-active .stat-card:hover {
+        border-color: rgba(255, 255, 255, 0.35) !important;
+        box-shadow: 0 20px 42px rgba(0, 0, 0, 0.45) !important;
+      }
+
+      .hero-video-active .stat-value {
+        color: #ffffff !important;
+      }
+
+      .hero-video-active .stat-label {
+        color: rgba(255, 255, 255, 0.75) !important;
+      }
+
+      .hero-video-active .scroll-indicator {
+        color: rgba(255, 255, 255, 0.85) !important;
+      }
+
+      .hero-video-active .scroll-indicator:hover {
+        color: #ffffff !important;
+      }
+
+      /* Hero Video Quick Control Badge */
+      .hero-video-actions {
+        position: absolute;
+        top: calc(var(--nav-height) + 16px);
+        right: 24px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 10;
+      }
+
+      .hero-video-ctrl-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 980px;
+        background: rgba(0, 0, 0, 0.38);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transition: all 0.2s var(--apple-ease);
+      }
+
+      .hero-video-ctrl-btn:hover {
+        background: rgba(0, 0, 0, 0.6);
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.45);
+        transform: scale(1.03);
       }
 
       .photo-upload-helper {
@@ -558,7 +800,9 @@
         fill: currentColor;
       }
 
-      #headshot-file-input {
+      #headshot-file-input,
+      #experience-file-input,
+      #education-file-input {
         display: none;
       }
 
@@ -589,6 +833,59 @@
         0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7); }
         70% { box-shadow: 0 0 0 7px rgba(52, 199, 89, 0); }
         100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
+      }
+
+      /* Hero Name Container: Inline flex layout for profile photo + name */
+      .hero-name-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(16px, 2.5vw, 24px);
+        margin-bottom: 16px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-name-container .hero-name {
+        margin-bottom: 0;
+      }
+
+      /* Hero Inline Profile Photo (0.8x-1x cap height, circular with refined border & shadow) */
+      @keyframes heroInlinePhotoEntrance {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .hero-inline-photo {
+        width: clamp(52px, 7.5vw, 78px);
+        height: clamp(52px, 7.5vw, 78px);
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: transparent;
+        border: 3px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        flex-shrink: 0;
+        display: block;
+        opacity: 0;
+        animation: heroInlinePhotoEntrance 800ms cubic-bezier(0.16, 1, 0.3, 1) 80ms forwards;
+        will-change: transform, opacity;
+        transition: transform 0.25s var(--apple-ease), box-shadow 0.25s var(--apple-ease);
+      }
+
+      .hero-inline-photo:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+      }
+
+      html.dark .hero-inline-photo {
+        border-color: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
       }
 
       /* Hero Name: clamp 56px–96px, font-weight 600, tight letter-spacing (-0.015em) */
@@ -867,8 +1164,123 @@
       }
 
       /* ==========================================================================
-         EXPERIENCE SECTION (Vertical Timeline with Minimal Cards)
+         EXPERIENCE SECTION (Ambient Background Video & Vertical Timeline)
          ========================================================================== */
+      #experience {
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Full-Bleed Ambient Experience Video Wrapper */
+      .experience-video-wrapper {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+        opacity: 1;
+        transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity;
+      }
+
+      .experience-video-wrapper.in-view {
+        opacity: 1;
+      }
+
+      /* Ambient Background Video: full-bleed, object-fit cover, clear visibility */
+      .experience-video-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        z-index: 0;
+        opacity: 0.95;
+        pointer-events: none;
+        display: block;
+      }
+
+      /* Readability Overlay: Light Mode (0.55-0.75) & Dark Mode (0.50-0.65) to keep video clearly visible */
+      .experience-video-overlay {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.75) 100%);
+        transition: background 0.3s ease;
+      }
+
+      html.dark .experience-video-overlay {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.65) 100%);
+      }
+
+      /* Experience Header Bar (Flex row containing 02 / Experience on left, Swap Video controls on right) */
+      .experience-header-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 16px;
+        position: relative;
+        z-index: 10;
+      }
+
+      .experience-header-bar .section-eyebrow {
+        margin-bottom: 0;
+      }
+
+      /* Experience Video Action Badges (Swap Video & Play/Pause pill buttons matching hero) */
+      .experience-video-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 10;
+      }
+
+      html:not(.dark) .experience-video-actions .hero-video-ctrl-btn {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(0, 0, 0, 0.16);
+        color: var(--text-primary);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      }
+
+      html:not(.dark) .experience-video-actions .hero-video-ctrl-btn:hover {
+        background: #ffffff;
+        border-color: rgba(0, 0, 0, 0.35);
+        color: var(--accent);
+      }
+
+      /* Section content sits cleanly with z-index: 2 above the background video */
+      #experience .container-narrow {
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Solid, opaque card surfaces so timeline cards clearly float above the video */
+      #experience .timeline-card {
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        position: relative;
+        z-index: 2;
+      }
+
+      html.dark #experience .timeline-card {
+        background-color: rgba(29, 29, 31, 0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+
+      #experience .timeline-node {
+        z-index: 3;
+      }
+
       .timeline {
         position: relative;
         margin-top: 56px;
@@ -1077,8 +1489,119 @@
       }
 
       /* ==========================================================================
-         EDUCATION SECTION
+         EDUCATION SECTION: BACKGROUND VIDEO & STYLING
          ========================================================================== */
+      #education {
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Full-Bleed Ambient Education Video Wrapper */
+      .education-video-wrapper {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+        opacity: 1;
+        transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity;
+      }
+
+      .education-video-wrapper.in-view {
+        opacity: 1;
+      }
+
+      /* Ambient Background Video: full-bleed, object-fit cover, clear visibility */
+      .education-video-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        z-index: 0;
+        opacity: 0.95;
+        pointer-events: none;
+        display: block;
+      }
+
+      /* Readability Overlay: Light Mode (0.55-0.75) & Dark Mode (0.50-0.65) */
+      .education-video-overlay {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.75) 100%);
+        transition: background 0.3s ease;
+      }
+
+      html.dark .education-video-overlay {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.65) 100%);
+      }
+
+      /* Education Header Bar (Flex row containing 04 / Education on left, Swap Video controls on right) */
+      .education-header-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 16px;
+        position: relative;
+        z-index: 10;
+      }
+
+      .education-header-bar .section-eyebrow {
+        margin-bottom: 0;
+      }
+
+      /* Education Video Action Badges (Swap Video & Play/Pause pill buttons matching hero and experience) */
+      .education-video-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 10;
+      }
+
+      html:not(.dark) .education-video-actions .hero-video-ctrl-btn {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(0, 0, 0, 0.16);
+        color: var(--text-primary);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      }
+
+      html:not(.dark) .education-video-actions .hero-video-ctrl-btn:hover {
+        background: #ffffff;
+        border-color: rgba(0, 0, 0, 0.35);
+        color: var(--accent);
+      }
+
+      /* Education content sits cleanly above background video */
+      #education .container-narrow {
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Solid, opaque card surfaces so education cards clearly float above the video */
+      #education .edu-card {
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        position: relative;
+        z-index: 2;
+      }
+
+      html.dark #education .edu-card {
+        background-color: rgba(29, 29, 31, 0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+
       .education-list {
         display: flex;
         flex-direction: column;
@@ -1237,6 +1760,32 @@
 
       .contact-pill-btn.secondary:hover {
         border-color: var(--text-secondary);
+      }
+
+      .contact-pill-btn.linkedin {
+        background-color: var(--card-bg);
+        color: var(--text-primary);
+        border: 1px solid var(--pill-secondary-border);
+      }
+
+      .contact-pill-btn.linkedin:hover {
+        border-color: #0a66c2;
+        color: #0a66c2;
+        box-shadow: 0 6px 20px rgba(10, 102, 194, 0.18);
+      }
+
+      html.dark .contact-pill-btn.linkedin:hover {
+        border-color: #70b5f9;
+        color: #70b5f9;
+        box-shadow: 0 6px 20px rgba(112, 181, 249, 0.22);
+      }
+
+      .contact-pill-btn.linkedin svg {
+        transition: transform 0.2s var(--apple-ease);
+      }
+
+      .contact-pill-btn.linkedin:hover svg {
+        transform: scale(1.08);
       }
 
       .contact-pill-btn svg {
@@ -1586,7 +2135,25 @@
         }
       }
 
+      @media (max-width: 640px) {
+        .hero-name-container {
+          flex-direction: column;
+          gap: 12px;
+          text-align: center;
+        }
+      }
+
       @media (max-width: 480px) {
+        .nav-profile-photo {
+          width: 32px;
+          height: 32px;
+        }
+        .nav-brand-group {
+          gap: 8px;
+        }
+        .nav-cta-btn {
+          display: none;
+        }
         .hero-stats {
           grid-template-columns: 1fr;
         }
@@ -1619,10 +2186,15 @@
         }
         .reveal-node, .hero-load-photo, .hero-load-badge, .hero-load-name, 
         .hero-load-sub, .hero-load-hook, .hero-load-buttons, .hero-load-stats, 
-        .hero-load-scroll {
+        .hero-load-scroll, .hero-video-float, .hero-video-container,
+        .hero-video-wrapper, .hero-video-fullbleed,
+        .experience-video-wrapper, .experience-video-bg,
+        .education-video-wrapper, .education-video-bg,
+        .hero-inline-photo, .nav-profile-photo, .nav-profile-link {
           opacity: 1 !important;
           transform: none !important;
           animation: none !important;
+          transition: none !important;
         }
         .scroll-arrow {
           animation: none !important;
@@ -1634,10 +2206,31 @@
     <!-- Sticky Apple Navigation (Transparent over Hero -> Frosted on Scroll) -->
     <header class="navbar" id="navbar">
       <div class="nav-content">
-        <a href="#hero" class="nav-brand" aria-label="Bhanu Prasad Home">
-          <span class="nav-brand-dot"></span>
-          <span>Bhanu Prasad</span>
-        </a>
+        <div class="nav-brand-group">
+          <!-- Circular Profile Photo linking directly to LinkedIn Profile -->
+          <a
+            href="https://www.linkedin.com/in/amruthala-bhanu-prasad-6259b823b"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="nav-profile-link"
+            aria-label="View LinkedIn profile"
+            title="View LinkedIn profile"
+          >
+            <img
+              id="nav-profile-photo"
+              class="nav-profile-photo"
+              src="linkedin_head_shot.png"
+              alt="Bhanu Prasad"
+              width="38"
+              height="38"
+            />
+            <span class="sr-only">View LinkedIn profile</span>
+          </a>
+          <a href="#hero" class="nav-brand" aria-label="Bhanu Prasad Home">
+            <span class="nav-brand-dot"></span>
+            <span>Bhanu Prasad</span>
+          </a>
+        </div>
 
         <ul class="nav-links">
           <li><a href="#about" class="nav-link">About</a></li>
@@ -1698,44 +2291,70 @@
       </div>
     </div>
 
-    <!-- 1. HERO SECTION -->
-    <section id="hero">
-      <!-- Subtle Animated Gradient Mesh (Apple Event Style) -->
-      <div class="hero-mesh">
-        <div class="mesh-blob mesh-blob-1"></div>
-        <div class="mesh-blob mesh-blob-2"></div>
-        <div class="mesh-blob mesh-blob-3"></div>
+    <!-- 1. HERO SECTION (Full-Bleed Cinematic Video) -->
+    <section id="hero" class="hero-video-active">
+      <!-- Full-Bleed Background Video with Framer Motion Entrance & Eased Floating -->
+      <div class="hero-video-wrapper" id="hero-video-wrapper">
+        <video
+          id="hero-bg-video"
+          class="hero-video-fullbleed"
+          autoplay
+          muted
+          loop
+          playsinline
+          crossorigin="anonymous"
+          poster="fallback-image.jpg"
+        >
+          <!-- EXTERNAL HERO VIDEO URL: Paste your direct .mp4 link in src below -->
+          <source id="hero-video-source" src="hero-bg-video.mp4" type="video/mp4" />
+          <source src="hero-video.mp4" type="video/mp4" />
+        </video>
+        <!-- Semi-transparent overlay (0.35 light / 0.55 dark) for maximum text readability -->
+        <div class="hero-video-overlay" aria-hidden="true"></div>
+        <!-- Natural gradient mask fading video into page background -->
+        <div class="hero-video-bottom-gradient" aria-hidden="true"></div>
+      </div>
+
+      <!-- Video Control Tools (Discreet Top-Right Pill Badges) -->
+      <div class="hero-video-actions">
+        <label class="hero-video-ctrl-btn" for="headshot-file-input" title="Upload or swap hero video file">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <span>Swap Video</span>
+        </label>
+        <button type="button" class="hero-video-ctrl-btn" id="video-playback-toggle" title="Pause or play video">
+          <svg id="pause-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+          <svg id="play-icon" style="display:none;" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </button>
+        <input type="file" id="headshot-file-input" accept="video/*,image/*" />
       </div>
 
       <div class="container hero-content">
-        <!-- Circular Profile Photo (with pulsing glow + subtle scroll parallax + id="profile-photo") -->
-        <div class="profile-wrapper hero-load-photo" id="hero-photo-wrapper">
-          <div class="profile-glow"></div>
-          <img
-            id="profile-photo"
-            class="profile-photo"
-            src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' width='200' height='200'><defs><linearGradient id='bgGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23e2e8f0'/><stop offset='100%25' stop-color='%23cbd5e1'/></linearGradient><linearGradient id='suitGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%230f172a'/><stop offset='100%25' stop-color='%231e293b'/></linearGradient></defs><rect width='200' height='200' fill='url(%23bgGrad)'/><path d='M35 200 C35 155, 65 142, 100 142 C135 142, 165 155, 165 200 Z' fill='url(%23suitGrad)'/><polygon points='100,142 84,178 116,178' fill='%23ffffff'/><polygon points='100,165 92,195 108,195' fill='%230071e3'/><circle cx='100' cy='88' r='42' fill='%23c68652'/><path d='M68 62 C74 40, 126 40, 132 62 C134 76, 132 82, 132 82 C125 70, 75 70, 68 82 Z' fill='%2318181b'/><path d='M76 86 C74 116, 86 128, 100 128 C114 128, 126 116, 124 86 C124 100, 114 118, 100 118 C86 118, 76 100, 76 86 Z' fill='%2318181b'/><ellipse cx='86' cy='88' rx='4' ry='3.5' fill='%2318181b'/><ellipse cx='114' cy='88' rx='4' ry='3.5' fill='%2318181b'/><path d='M92 106 Q100 114 108 106' stroke='%23ffffff' stroke-width='2.5' fill='none' stroke-linecap='round'/></svg>"
-            alt="Bhanu Prasad - Trainer and Communication Skills Coach"
-            title="Bhanu Prasad"
-          />
-          <!-- Interactive helper allowing user to select & preview their local headshot file instantly -->
-          <label class="photo-upload-helper" for="headshot-file-input" title="Preview your own photo in real-time">
-            <svg viewBox="0 0 24 24">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-              <circle cx="12" cy="13" r="4"></circle>
-            </svg>
-          </label>
-          <input type="file" id="headshot-file-input" accept="image/*" />
-        </div>
-
         <!-- Availability Badge -->
         <div class="hero-badge hero-load-badge">
           <span class="status-pulse"></span>
           <span>Available for Campus & Corporate Training</span>
         </div>
 
-        <!-- Hero Name: clamp 56px–96px, font-weight 600, tight letter-spacing (-0.015em) -->
-        <h1 class="hero-name hero-load-name">Bhanu Prasad</h1>
+        <!-- Hero Name with Inline Profile Photo -->
+        <div class="hero-name-container">
+          <img
+            id="hero-inline-photo"
+            class="hero-inline-photo"
+            src="linkedin_head_shot.png"
+            alt="Bhanu Prasad"
+            width="78"
+            height="78"
+          />
+          <h1 class="hero-name hero-load-name">Bhanu Prasad</h1>
+        </div>
 
         <!-- Hero Subtitle: 100ms staggered -->
         <p class="hero-subtitle hero-load-sub">
@@ -1874,10 +2493,51 @@
     <!-- Subtle Edge-Faded 1px Section Divider -->
     <div class="section-divider" aria-hidden="true"></div>
 
-    <!-- 3. EXPERIENCE SECTION -->
+    <!-- 3. EXPERIENCE SECTION (With Ambient Background Video & Swap Video Control) -->
     <section id="experience" class="reveal-group">
+      <!-- Ambient Background Video Behind Experience Content -->
+      <div class="experience-video-wrapper" id="experience-video-container" aria-hidden="true">
+        <video
+          id="experience-bg-video"
+          class="experience-video-bg"
+          autoplay
+          muted
+          loop
+          playsinline
+          crossorigin="anonymous"
+          poster="experience-fallback.jpg"
+        >
+          <!-- EXTERNAL EXPERIENCE VIDEO URL: Paste your direct .mp4 link in src below -->
+          <source id="experience-video-source" src="experience-bg-video.mp4" type="video/mp4" />
+        </video>
+        <!-- Semi-transparent Readability Overlay (Light 0.88-0.92 / Dark 0.75-0.85) -->
+        <div class="experience-video-overlay" aria-hidden="true"></div>
+      </div>
+
       <div class="container-narrow">
-        <span class="section-eyebrow reveal-node"><span class="section-num">02</span><span class="section-num-sep" aria-hidden="true">/</span><span>Experience</span></span>
+        <div class="experience-header-bar">
+          <span class="section-eyebrow reveal-node"><span class="section-num">02</span><span class="section-num-sep" aria-hidden="true">/</span><span>Experience</span></span>
+          <!-- Experience Video Control Tools (Swap Video & Play/Pause matching Hero) -->
+          <div class="experience-video-actions">
+            <label class="hero-video-ctrl-btn" for="experience-file-input" title="Upload or swap Experience background video">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+              <span>Swap Video</span>
+            </label>
+            <button type="button" class="hero-video-ctrl-btn" id="experience-playback-toggle" title="Pause or play experience video">
+              <svg id="exp-pause-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+              </svg>
+              <svg id="exp-play-icon" style="display:none;" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </button>
+            <input type="file" id="experience-file-input" accept="video/*" />
+          </div>
+        </div>
         <h2 class="section-headline reveal-node">A track record of student success.</h2>
         <p class="section-subhead reveal-node">Hands-on leadership across cohorts, placement drives, and institutional partnerships.</p>
 
@@ -2213,10 +2873,51 @@
     <!-- Subtle Edge-Faded 1px Section Divider -->
     <div class="section-divider" aria-hidden="true"></div>
 
-    <!-- 5. EDUCATION SECTION -->
+    <!-- 5. EDUCATION SECTION (With Ambient Background Video & Swap Video Control) -->
     <section id="education" class="reveal-group">
+      <!-- Ambient Background Video Behind Education Content -->
+      <div class="education-video-wrapper" id="education-video-container" aria-hidden="true">
+        <video
+          id="education-bg-video"
+          class="education-video-bg"
+          autoplay
+          muted
+          loop
+          playsinline
+          crossorigin="anonymous"
+          poster="experience-fallback.jpg"
+        >
+          <!-- EXTERNAL EDUCATION VIDEO URL: Paste your direct .mp4 link in src below -->
+          <source id="education-video-source" src="education-bg-video.mp4" type="video/mp4" />
+        </video>
+        <!-- Semi-transparent Readability Overlay (Light 0.55-0.75 / Dark 0.50-0.65) -->
+        <div class="education-video-overlay" aria-hidden="true"></div>
+      </div>
+
       <div class="container-narrow">
-        <span class="section-eyebrow reveal-node"><span class="section-num">04</span><span class="section-num-sep" aria-hidden="true">/</span><span>Education</span></span>
+        <div class="education-header-bar">
+          <span class="section-eyebrow reveal-node"><span class="section-num">04</span><span class="section-num-sep" aria-hidden="true">/</span><span>Education</span></span>
+          <!-- Education Video Control Tools (Swap Video & Play/Pause matching Hero and Experience) -->
+          <div class="education-video-actions">
+            <label class="hero-video-ctrl-btn" for="education-file-input" title="Upload or swap Education background video">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+              <span>Swap Video</span>
+            </label>
+            <button type="button" class="hero-video-ctrl-btn" id="education-playback-toggle" title="Pause or play education video">
+              <svg id="edu-pause-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+              </svg>
+              <svg id="edu-play-icon" style="display:none;" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </button>
+            <input type="file" id="education-file-input" accept="video/*" />
+          </div>
+        </div>
         <h2 class="section-headline reveal-node">Academic background & credentials.</h2>
         <p class="section-subhead reveal-node">The foundational philosophy and ongoing certifications powering my coaching practice.</p>
 
@@ -2328,6 +3029,16 @@
               </svg>
               <span>+91 9392352371</span>
             </a>
+
+            <!-- Connect on LinkedIn button with magnetic & ripple interactivity -->
+            <a href="https://www.linkedin.com/in/amruthala-bhanu-prasad-6259b823b" target="_blank" rel="noopener noreferrer" class="contact-pill-btn linkedin magnetic-btn" id="linkedin-btn" title="Connect with Bhanu Prasad on LinkedIn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+              <span>Connect on LinkedIn</span>
+            </a>
           </div>
 
           <!-- Quick Copy Tools -->
@@ -2340,6 +3051,11 @@
             <button class="mini-copy-btn" id="copy-phone-btn" type="button">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
               Copy Phone
+            </button>
+            <span style="color: var(--text-secondary); font-size: 12px; opacity: 0.5;">•</span>
+            <button class="mini-copy-btn" id="copy-linkedin-btn" type="button">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+              Copy LinkedIn
             </button>
             <span style="color: var(--text-secondary); font-size: 12px; opacity: 0.5;">•</span>
             <button class="mini-copy-btn" id="save-vcard-btn" type="button">
@@ -2386,6 +3102,7 @@
           <a href="#experience">Experience</a>
           <a href="#skills">Skills</a>
           <a href="#education">Education</a>
+          <a href="https://www.linkedin.com/in/amruthala-bhanu-prasad-6259b823b" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           <a href="#hero" class="back-to-top">Back to top ↑</a>
         </div>
       </div>
@@ -2709,6 +3426,18 @@
           });
         }
 
+        const copyLinkedinBtn = document.getElementById('copy-linkedin-btn');
+        if (copyLinkedinBtn) {
+          copyLinkedinBtn.addEventListener('click', () => {
+            const linkedinUrl = 'https://www.linkedin.com/in/amruthala-bhanu-prasad-6259b823b';
+            navigator.clipboard.writeText(linkedinUrl).then(() => {
+              showToast('LinkedIn URL copied to clipboard!');
+            }).catch(() => {
+              showToast(linkedinUrl);
+            });
+          });
+        }
+
         // Download Contact (.vcf vCard)
         const saveVcardBtn = document.getElementById('save-vcard-btn');
         if (saveVcardBtn) {
@@ -2722,6 +3451,7 @@
               'ORG:Employability & Interview Readiness Specialist',
               'EMAIL;TYPE=INTERNET,HOME:bhanuafh@gmail.com',
               'TEL;TYPE=CELL:+919392352371',
+              'URL:https://www.linkedin.com/in/amruthala-bhanu-prasad-6259b823b',
               'ADR;TYPE=HOME:;;Eluru;Andhra Pradesh;;India',
               'NOTE:1,000+ students trained across 30+ batches in communication, mock interviews, and group discussions.',
               'END:VCARD'
@@ -2740,37 +3470,364 @@
           });
         }
 
-        // 8. Headshot Image Local Preview Helper
-        // Preserves id="profile-photo" on <img> tag so user can either replace src directly in code
-        // or select a file locally for immediate in-browser preview
-        const fileInput = document.getElementById('headshot-file-input');
-        const profilePhotoImg = document.getElementById('profile-photo');
+        // =========================================================================
+        // EXTERNAL VIDEO CONFIGURATION
+        // Paste your direct external .mp4 hosting URLs here (e.g. from GitHub,
+        // Supabase, Cloudflare R2, AWS S3, Firebase, or any public video host).
+        // If left empty (''), the page automatically uses the bundled video assets.
+        // =========================================================================
+        const VIDEO_CONFIG = {
+          heroUrl: '',        // e.g. 'https://cdn.example.com/hero-bg-video.mp4'
+          experienceUrl: '',  // e.g. 'https://cdn.example.com/experience-bg-video.mp4'
+          educationUrl: '',   // e.g. 'https://cdn.example.com/education-bg-video.mp4'
+        };
 
-        const cachedPhoto = localStorage.getItem('bhanu_custom_headshot');
-        if (cachedPhoto && profilePhotoImg) {
-          profilePhotoImg.src = cachedPhoto;
+        // 8. Headshot & Video Local Preview Helper + Autoplay Management (Hero Section)
+        const fileInput = document.getElementById('headshot-file-input');
+        const heroVideo = document.getElementById('hero-bg-video') || document.getElementById('hero-video');
+        const playbackToggleBtn = document.getElementById('video-playback-toggle');
+        const pauseIcon = document.getElementById('pause-icon');
+        const playIcon = document.getElementById('play-icon');
+
+        // Apply external video URL if provided in config
+        if (heroVideo && VIDEO_CONFIG.heroUrl) {
+          heroVideo.src = VIDEO_CONFIG.heroUrl;
+          heroVideo.load();
         }
 
-        if (fileInput && profilePhotoImg) {
-          fileInput.addEventListener('change', function(e) {
-            const file = e.target.files && e.target.files[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = function(evt) {
-                profilePhotoImg.src = evt.target.result;
-                try {
-                  localStorage.setItem('bhanu_custom_headshot', evt.target.result);
-                } catch(err) {
-                  // Ignore localStorage quota limit if file is very large
-                }
-                showToast('Headshot updated!');
-              };
-              reader.readAsDataURL(file);
+        // Manage video autoplay & respects prefers-reduced-motion
+        if (heroVideo) {
+          heroVideo.muted = true;
+          if (prefersReducedMotion) {
+            heroVideo.pause();
+            if (pauseIcon) pauseIcon.style.display = 'none';
+            if (playIcon) playIcon.style.display = 'block';
+          } else {
+            const playPromise = heroVideo.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(() => {
+                heroVideo.muted = true;
+                heroVideo.play().catch(() => {});
+              });
+            }
+          }
+        }
+
+        if (playbackToggleBtn && heroVideo) {
+          playbackToggleBtn.addEventListener('click', () => {
+            if (heroVideo.paused) {
+              heroVideo.play().then(() => {
+                if (pauseIcon) pauseIcon.style.display = 'block';
+                if (playIcon) playIcon.style.display = 'none';
+                showToast('Hero video playing');
+              }).catch(() => {});
+            } else {
+              heroVideo.pause();
+              if (pauseIcon) pauseIcon.style.display = 'none';
+              if (playIcon) playIcon.style.display = 'block';
+              showToast('Hero video paused');
             }
           });
         }
 
-        // 9. Smooth Anchor Scrolling
+        // Hero Swap Video file input (scoped only to hero video)
+        if (fileInput) {
+          fileInput.addEventListener('change', function(e) {
+            const file = e.target.files && e.target.files[0];
+            if (file) {
+              const fileUrl = URL.createObjectURL(file);
+              if (heroVideo) {
+                heroVideo.src = fileUrl;
+                heroVideo.load();
+                if (!prefersReducedMotion) {
+                  heroVideo.play().then(() => {
+                    if (pauseIcon) pauseIcon.style.display = 'block';
+                    if (playIcon) playIcon.style.display = 'none';
+                  }).catch(() => {});
+                }
+                showToast('Hero video loaded!');
+              }
+            }
+          });
+        }
+
+        // Profile photos fallback error handler
+        const navProfilePhoto = document.getElementById('nav-profile-photo');
+        if (navProfilePhoto) {
+          navProfilePhoto.addEventListener('error', () => {
+            if (!navProfilePhoto.src.endsWith('linkedin_head_shot.png')) {
+              navProfilePhoto.src = 'linkedin_head_shot.png';
+            }
+          });
+        }
+
+        const inlineProfilePhoto = document.getElementById('hero-inline-photo');
+        if (inlineProfilePhoto) {
+          inlineProfilePhoto.addEventListener('error', () => {
+            if (!inlineProfilePhoto.src.endsWith('linkedin_head_shot.png')) {
+              inlineProfilePhoto.src = 'linkedin_head_shot.png';
+            }
+          });
+        }
+
+        // Hero scroll pause/resume observer for performance
+        const heroSection = document.getElementById('hero');
+        if (heroSection && heroVideo && !prefersReducedMotion) {
+          const heroObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                if (heroVideo.paused && pauseIcon && pauseIcon.style.display !== 'none') {
+                  heroVideo.play().catch(() => {});
+                }
+              } else {
+                heroVideo.pause();
+              }
+            });
+          }, { threshold: 0.05 });
+          heroObserver.observe(heroSection);
+        }
+
+        // 9. Experience Section Background Video & Independent Swap Video Control
+        const expFileInput = document.getElementById('experience-file-input');
+        const expVideo = document.getElementById('experience-bg-video');
+        const expVideoWrapper = document.getElementById('experience-video-container');
+        const expPlaybackToggleBtn = document.getElementById('experience-playback-toggle');
+        const expPauseIcon = document.getElementById('exp-pause-icon');
+        const expPlayIcon = document.getElementById('exp-play-icon');
+        const expSection = document.getElementById('experience');
+
+        let isExpManuallyPaused = false;
+
+        function updateExpPlaybackUI(isPlaying) {
+          if (expPauseIcon) expPauseIcon.style.display = isPlaying ? 'block' : 'none';
+          if (expPlayIcon) expPlayIcon.style.display = isPlaying ? 'none' : 'block';
+        }
+
+        // Initialize experience video autoplay & reduced motion behavior
+        if (expVideo) {
+          expVideo.muted = true;
+          if (VIDEO_CONFIG.experienceUrl) {
+            expVideo.src = VIDEO_CONFIG.experienceUrl;
+            expVideo.load();
+          }
+          if (expVideoWrapper) expVideoWrapper.classList.add('in-view');
+          if (prefersReducedMotion) {
+            expVideo.pause();
+            updateExpPlaybackUI(false);
+          } else {
+            const playPromise = expVideo.play();
+            if (playPromise !== undefined) {
+              playPromise.then(() => {
+                updateExpPlaybackUI(true);
+              }).catch(() => {
+                expVideo.muted = true;
+                expVideo.play().then(() => updateExpPlaybackUI(true)).catch(() => {});
+              });
+            }
+          }
+
+          // Error handling fallback: if video file is missing or fails, keep poster visible
+          expVideo.addEventListener('error', () => {
+            if (expVideoWrapper) expVideoWrapper.classList.add('in-view');
+          });
+        }
+
+        // Experience Play/Pause Toggle button
+        if (expPlaybackToggleBtn && expVideo) {
+          expPlaybackToggleBtn.addEventListener('click', () => {
+            if (expVideo.paused) {
+              isExpManuallyPaused = false;
+              expVideo.play().then(() => {
+                updateExpPlaybackUI(true);
+                showToast('Experience video playing');
+              }).catch(() => {});
+            } else {
+              isExpManuallyPaused = true;
+              expVideo.pause();
+              updateExpPlaybackUI(false);
+              showToast('Experience video paused');
+            }
+          });
+        }
+
+        // Experience Swap Video file input (scoped only to Experience section)
+        if (expFileInput && expVideo) {
+          expFileInput.addEventListener('change', function(e) {
+            const file = e.target.files && e.target.files[0];
+            if (file) {
+              const fileUrl = URL.createObjectURL(file);
+              isExpManuallyPaused = false;
+              expVideo.src = fileUrl;
+              expVideo.load();
+              if (expVideoWrapper) expVideoWrapper.classList.add('in-view');
+              if (!prefersReducedMotion) {
+                expVideo.play().then(() => {
+                  updateExpPlaybackUI(true);
+                }).catch(() => {
+                  expVideo.muted = true;
+                  expVideo.play().then(() => updateExpPlaybackUI(true)).catch(() => {});
+                });
+              } else {
+                expVideo.pause();
+                updateExpPlaybackUI(false);
+              }
+              showToast('Experience video swapped!');
+            }
+          });
+        }
+
+        // Scroll-triggered Fade-In & Play/Pause observer for Experience Section
+        if (expSection && expVideo && !prefersReducedMotion) {
+          const expObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                if (expVideoWrapper) {
+                  expVideoWrapper.classList.add('in-view');
+                }
+                if (!isExpManuallyPaused) {
+                  const playPromise = expVideo.play();
+                  if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                      expVideo.muted = true;
+                      expVideo.play().catch(() => {});
+                    });
+                  }
+                  updateExpPlaybackUI(true);
+                }
+              } else {
+                expVideo.pause();
+                updateExpPlaybackUI(false);
+              }
+            });
+          }, {
+            threshold: 0.05,
+            rootMargin: '40px 0px 40px 0px'
+          });
+
+          expObserver.observe(expSection);
+        }
+
+        // 10. Education Section Background Video & Independent Swap Video Control
+        const eduFileInput = document.getElementById('education-file-input');
+        const eduVideo = document.getElementById('education-bg-video');
+        const eduVideoWrapper = document.getElementById('education-video-container');
+        const eduPlaybackToggleBtn = document.getElementById('education-playback-toggle');
+        const eduPauseIcon = document.getElementById('edu-pause-icon');
+        const eduPlayIcon = document.getElementById('edu-play-icon');
+        const eduSection = document.getElementById('education');
+
+        let isEduManuallyPaused = false;
+
+        function updateEduPlaybackUI(isPlaying) {
+          if (eduPauseIcon) eduPauseIcon.style.display = isPlaying ? 'block' : 'none';
+          if (eduPlayIcon) eduPlayIcon.style.display = isPlaying ? 'none' : 'block';
+        }
+
+        // Initialize education video autoplay & reduced motion behavior
+        if (eduVideo) {
+          eduVideo.muted = true;
+          if (VIDEO_CONFIG.educationUrl) {
+            eduVideo.src = VIDEO_CONFIG.educationUrl;
+            eduVideo.load();
+          }
+          if (eduVideoWrapper) eduVideoWrapper.classList.add('in-view');
+          if (prefersReducedMotion) {
+            eduVideo.pause();
+            updateEduPlaybackUI(false);
+          } else {
+            const playPromise = eduVideo.play();
+            if (playPromise !== undefined) {
+              playPromise.then(() => {
+                updateEduPlaybackUI(true);
+              }).catch(() => {
+                eduVideo.muted = true;
+                eduVideo.play().then(() => updateEduPlaybackUI(true)).catch(() => {});
+              });
+            }
+          }
+
+          // Error handling fallback: if video file fails, keep poster visible
+          eduVideo.addEventListener('error', () => {
+            if (eduVideoWrapper) eduVideoWrapper.classList.add('in-view');
+          });
+        }
+
+        // Education Play/Pause Toggle button
+        if (eduPlaybackToggleBtn && eduVideo) {
+          eduPlaybackToggleBtn.addEventListener('click', () => {
+            if (eduVideo.paused) {
+              isEduManuallyPaused = false;
+              eduVideo.play().then(() => {
+                updateEduPlaybackUI(true);
+                showToast('Education video playing');
+              }).catch(() => {});
+            } else {
+              isEduManuallyPaused = true;
+              eduVideo.pause();
+              updateEduPlaybackUI(false);
+              showToast('Education video paused');
+            }
+          });
+        }
+
+        // Education Swap Video file input (scoped only to Education section)
+        if (eduFileInput && eduVideo) {
+          eduFileInput.addEventListener('change', function(e) {
+            const file = e.target.files && e.target.files[0];
+            if (file) {
+              const fileUrl = URL.createObjectURL(file);
+              isEduManuallyPaused = false;
+              eduVideo.src = fileUrl;
+              eduVideo.load();
+              if (eduVideoWrapper) eduVideoWrapper.classList.add('in-view');
+              if (!prefersReducedMotion) {
+                eduVideo.play().then(() => {
+                  updateEduPlaybackUI(true);
+                }).catch(() => {
+                  eduVideo.muted = true;
+                  eduVideo.play().then(() => updateEduPlaybackUI(true)).catch(() => {});
+                });
+              } else {
+                eduVideo.pause();
+                updateEduPlaybackUI(false);
+              }
+              showToast('Education video swapped!');
+            }
+          });
+        }
+
+        // Scroll-triggered Fade-In & Play/Pause observer for Education Section
+        if (eduSection && eduVideo && !prefersReducedMotion) {
+          const eduObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                if (eduVideoWrapper) {
+                  eduVideoWrapper.classList.add('in-view');
+                }
+                if (!isEduManuallyPaused) {
+                  const playPromise = eduVideo.play();
+                  if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                      eduVideo.muted = true;
+                      eduVideo.play().catch(() => {});
+                    });
+                  }
+                  updateEduPlaybackUI(true);
+                }
+              } else {
+                eduVideo.pause();
+                updateEduPlaybackUI(false);
+              }
+            });
+          }, {
+            threshold: 0.05,
+            rootMargin: '40px 0px 40px 0px'
+          });
+
+          eduObserver.observe(eduSection);
+        }
+
+        // 11. Smooth Anchor Scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
           anchor.addEventListener('click', function(e) {
             const targetId = this.getAttribute('href');
